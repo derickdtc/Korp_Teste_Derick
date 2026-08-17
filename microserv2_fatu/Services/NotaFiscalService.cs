@@ -12,6 +12,7 @@ public class NotaFiscalService(FaturamentoDbContext context, IEstoqueClient esto
     public async Task<NotaFiscalDto> CriarAsync(CriarNotaFiscalDto dto, CancellationToken cancellationToken)
     {
         var quantidadesPorProduto = ConsolidarItens(dto.Itens);
+        var descricoesPorProduto = await estoqueClient.ObterDescricoesAsync(quantidadesPorProduto.Keys.ToList(), cancellationToken);
         var ultimoNumero = await context.NotasFiscais.Select(nota => (int?)nota.Numero).MaxAsync(cancellationToken) ?? 0;
         var nota = new NotaFiscal
         {
@@ -22,6 +23,7 @@ public class NotaFiscalService(FaturamentoDbContext context, IEstoqueClient esto
             {
                 Id = Guid.NewGuid(),
                 ProdutoId = item.Key,
+                Descricao = descricoesPorProduto[item.Key],
                 Quantidade = (int)item.Value
             }).ToList()
         };
@@ -49,6 +51,7 @@ public class NotaFiscalService(FaturamentoDbContext context, IEstoqueClient esto
                 Itens = nota.Itens.OrderBy(item => item.ProdutoId).Select(item => new ItemNotaFiscalDto
                 {
                     ProdutoId = item.ProdutoId,
+                    Descricao = item.Descricao,
                     Quantidade = item.Quantidade
                 }).ToList()
             }).ToListAsync(cancellationToken);
@@ -105,6 +108,7 @@ public class NotaFiscalService(FaturamentoDbContext context, IEstoqueClient esto
         Itens = nota.Itens.OrderBy(item => item.ProdutoId).Select(item => new ItemNotaFiscalDto
         {
             ProdutoId = item.ProdutoId,
+            Descricao = item.Descricao,
             Quantidade = item.Quantidade
         }).ToList()
     };

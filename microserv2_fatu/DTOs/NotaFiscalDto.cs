@@ -11,5 +11,6 @@ public class NotaFiscalDto
 public class ItemNotaFiscalDto
 {
     public Guid ProdutoId { get; init; }
+    public string Descricao { get; init; } = string.Empty;
     public int Quantidade { get; init; }
 }

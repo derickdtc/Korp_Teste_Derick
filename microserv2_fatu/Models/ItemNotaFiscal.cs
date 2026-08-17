@@ -6,5 +6,6 @@ public class ItemNotaFiscal
     public Guid NotaFiscalId { get; set; }
     public NotaFiscal NotaFiscal { get; set; } = null!;
     public Guid ProdutoId { get; set; }
+    public string Descricao { get; set; } = string.Empty;
     public int Quantidade { get; set; }
 }

@@ -22,6 +22,7 @@ public class FaturamentoDbContext(DbContextOptions<FaturamentoDbContext> options
         item.ToTable("ItensNotasFiscais");
         item.HasKey(i => i.Id);
         item.Property(i => i.ProdutoId).IsRequired();
+        item.Property(i => i.Descricao).HasMaxLength(200).IsRequired();
         item.Property(i => i.Quantidade).IsRequired();
     }
 }

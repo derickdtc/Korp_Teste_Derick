@@ -19,6 +19,7 @@ export class App implements OnInit {
   readonly salvandoProduto = signal(false);
   readonly salvandoNota = signal(false);
   readonly imprimindoId = signal<string | null>(null);
+  readonly notaParaImpressao = signal<NotaFiscal | null>(null);
   readonly mensagem = signal<{ tipo: 'sucesso' | 'erro'; texto: string } | null>(null);
 
   novoProduto = { codigo: '', descricao: '', saldo: 0 };
@@ -28,7 +29,11 @@ export class App implements OnInit {
     if (isPlatformBrowser(this.platformId)) this.carregarDados();
   }
 
-  selecionarTela(tela: Tela): void { this.telaAtual.set(tela); this.mensagem.set(null); }
+  selecionarTela(tela: Tela): void {
+    this.telaAtual.set(tela);
+    this.mensagem.set(null);
+    this.carregarDados();
+  }
 
   carregarDados(): void {
     this.carregando.set(true);
@@ -101,7 +106,9 @@ export class App implements OnInit {
       next: notaAtualizada => {
         this.imprimindoId.set(null);
         this.notas.update(notas => notas.map(item => item.id === notaAtualizada.id ? notaAtualizada : item));
+        this.notaParaImpressao.set(notaAtualizada);
         this.exibirSucesso(`Nota fiscal nº ${notaAtualizada.numero} fechada e enviada para impressão.`);
+        this.carregarDados();
         window.setTimeout(() => window.print(), 250);
       },
       error: erro => { this.imprimindoId.set(null); this.exibirErro(this.mensagemDaApi(erro)); }
