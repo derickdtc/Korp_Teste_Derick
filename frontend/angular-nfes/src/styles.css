@@ -1,3 +1,32 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+@theme { --font-sans: Inter, ui-sans-serif, system-ui, sans-serif; }
+html { background: #f8fafc; }
+body { margin: 0; min-width: 320px; }
+button, input, select { font: inherit; }
+@media print { body { background: white; } }
+
+/* Paleta institucional Korp: azul petróleo, vermelho e branco. */
+:root {
+  --korp-navy: #214b5c;
+  --korp-red: #e81f4f;
+  --korp-navy-soft: #edf4f6;
+  --korp-red-soft: #fff0f4;
+}
+
+.bg-blue-700, .bg-blue-600, .bg-blue-800, .bg-slate-900 { background-color: var(--korp-navy) !important; }
+.text-blue-700, .text-blue-900, .text-blue-300, .text-emerald-600, .text-emerald-700, .text-emerald-800 { color: var(--korp-navy) !important; }
+.bg-blue-50, .bg-emerald-50, .bg-emerald-100 { background-color: var(--korp-navy-soft) !important; }
+.border-blue-100, .border-blue-200, .border-emerald-200 { border-color: #c4d8df !important; }
+.border-blue-600 { border-color: var(--korp-navy) !important; }
+.border-t-blue-700 { border-top-color: var(--korp-navy) !important; }
+.ring-blue-100 { --tw-ring-color: #c4d8df !important; }
+
+.bg-amber-100, .bg-rose-50, .bg-rose-100 { background-color: var(--korp-red-soft) !important; }
+.text-amber-600, .text-amber-700, .text-rose-600, .text-rose-700, .text-rose-800 { color: var(--korp-red) !important; }
+.border-rose-200 { border-color: #f5b7c7 !important; }
+
+form button[type="submit"] { background-color: var(--korp-red) !important; }
+form button[type="submit"]:hover { background-color: #c91842 !important; }
