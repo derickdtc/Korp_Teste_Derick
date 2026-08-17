@@ -3,6 +3,7 @@ using Microserv1Est.DTOs;
 using Microserv1Est.Exceptions;
 using Microserv1Est.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Npgsql;
 
 namespace Microserv1Est.Services;
@@ -68,6 +69,8 @@ public class ProdutoService(EstoqueDbContext context) : IProdutoService
         await using var transacao = await context.Database.BeginTransactionAsync(cancellationToken);
         try
         {
+            await BloquearProdutosParaBaixaAsync(ids, transacao, cancellationToken);
+
             var produtos = await context.Produtos.Where(produto => ids.Contains(produto.Id)).ToListAsync(cancellationToken);
             var produtosPorId = produtos.ToDictionary(produto => produto.Id);
 
@@ -93,4 +96,27 @@ public class ProdutoService(EstoqueDbContext context) : IProdutoService
     {
         Id = produto.Id, Codigo = produto.Codigo, Descricao = produto.Descricao, Saldo = produto.Saldo
     };
+
+    private async Task BloquearProdutosParaBaixaAsync(
+        IReadOnlyCollection<Guid> ids,
+        IDbContextTransaction transacao,
+        CancellationToken cancellationToken)
+    {
+        await using var comando = context.Database.GetDbConnection().CreateCommand();
+        comando.Transaction = transacao.GetDbTransaction();
+        comando.CommandText = """
+            SELECT "Id"
+            FROM "Produtos"
+            WHERE "Id" = ANY (@ids)
+            ORDER BY "Id"
+            FOR UPDATE;
+            """;
+
+        var parametroIds = comando.CreateParameter();
+        parametroIds.ParameterName = "ids";
+        parametroIds.Value = ids.ToArray();
+        comando.Parameters.Add(parametroIds);
+
+        await comando.ExecuteNonQueryAsync(cancellationToken);
+    }
 }
