@@ -1,4 +1,12 @@
 .env
 **/.env
+**/.env.local
+**/.env.*.local
+**/appsettings.Development.json
+**/appsettings.Production.json
+*.pem
+*.key
+*.p12
+*.pfx
 bin/
 obj/
